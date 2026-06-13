@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo List</title>
+
+<style>
+   body{
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    background-color: #f4f4f4;
+}
+
+section{
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    width: 400px;
+}
+
+h1{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#input_add{
+    display: flex;
+    gap: 10px;
+}
+
+input{
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button{
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+#addBtn{
+    background-color: green;
+}
+
+.deleteBtn{
+    background-color: red;
+}
+
+#t0do_list{
+    margin-top: 20px;
+}
+
+.main_todo_list{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.main_todo_list li{
+    list-style: none;
+    word-break: break-word;
+}
+</style>
+</head>
+<body>
+
+<section>
+    <h1>Todo List</h1>
+
+    <div id="input_add">
+        <input type="text" id="input" placeholder="Enter a task">
+        <button id="addBtn">Add Todo</button>
+    </div>
+    <div id="t0do_list"></div>
+</section>
+
+<script>
+    let input = document.getElementById("input");
+    let addBtn = document.getElementById("addBtn");
+    let t0do_list = document.getElementById("t0do_list");
+
+
+
+     
+
+ //  agr kuch nhi oga to uniltially empty  array shw kreg in memory
+
+      //ab yaha pe code likheg  ki jo data pehle se local storage me hai wo yah show ho...
+        const getTodoListfromlocal=()=>{
+          //  localStorage.getItem("youtube",)    //dtaa to string ke form me hoga t hme use aray me chahiye to pasrr krna hoga
+            return JSON.parse( localStorage.getItem("youtube"))
+        };
+let localTodolis=getTodoListfromlocal()|| [] 
+
+
+// //  jo current lement hmne extract kiya hai  show data function se ab use show krna--
+const adddynamic=(currentelm)=>{
+    
+        const divelm = document.createElement("div");
+        divelm.classList.add("main_todo_list");
+
+        divelm.innerHTML = `
+            <li>${currentelm}</li>
+            <button class="deleteBtn">Delete</button>
+        `;
+
+        t0do_list.appendChild(divelm);
+
+}
+
+
+
+
+
+    const TODOLIST = (e) => {
+        e.preventDefault();
+
+          //  memory me jodattda hoga wo yaha aayega  pehle hi islye ise top pr caal kiya hai
+           const listvalue=input.value.trim()// input value  without extra space 
+            
+if(!localTodolis.includes(listvalue)){
+       
+ input.value="";
+        localTodolis.push(listvalue) // input value ko push krna hai ek new varaorbl me
+        localTodolis= [...new Set(localTodolis) ];// set me dta ko conver kr diya so that dupliacte vlaue na aay bt problem ye hia ki set banne kke baad psu nhi hoga new value as it is not araay so make it an aary
+        console.log(localTodolis)
+
+        localStorage.setItem("youtube", JSON.stringify(localTodolis))
+
+       
+
+
+        const divelm = document.createElement("div");
+        divelm.classList.add("main_todo_list");
+
+        divelm.innerHTML = `
+            <li>${listvalue}</li>
+            <button class="deleteBtn">Delete</button>
+        `;
+
+        t0do_list.appendChild(divelm);}
+    };
+
+   // ek function banuga jo local stoarge me da ahi use fetch krega
+    const showdata=()=>{
+        console.log(localTodolis)
+        localTodolis.forEach((currentelm)=>{
+            adddynamic(currentelm);
+
+        })
+
+    };
+    showdata();
+
+   // remove the data 
+const removetodoelement = (e) => {
+
+    if(e.target.classList.contains("deleteBtn")){
+
+        const todotoremove = e.target;
+
+        let todolistContent =
+            todotoremove.previousElementSibling.textContent;
+
+        localTodolis = localTodolis.filter(
+            (curtodo) => curtodo !== todolistContent
+        );
+
+        localStorage.setItem(
+            "youtube",
+            JSON.stringify(localTodolis)
+        );
+
+        todotoremove.parentElement.remove();
+    }
+}
+    t0do_list.addEventListener("click",(e)=>{
+        e.preventDefault();
+        removetodoelement(e)
+    });
+
+     addBtn.addEventListener("click", (e) => {
+        TODOLIST(e);
+    });
+</script>
+
+</body>
+</html>
